@@ -3,6 +3,9 @@ extends Area2D
 signal hit
 
 export (int) var SPEED
+var CONTROLLER_NUMBER = 0
+var LEFT_ANALOG_DEADZONE = 0.25
+
 var screensize
 
 func start(pos):
@@ -12,20 +15,14 @@ func start(pos):
 
 func _ready():
     screensize = get_viewport_rect().size
-    hide()
+    # hide()
 
 func _process(delta):
-    var velocity = Vector2() # the player's movement vector
+    var velocity = Vector2(
+        Input.get_joy_axis(CONTROLLER_NUMBER, JOY_AXIS_0), 
+        Input.get_joy_axis(CONTROLLER_NUMBER, JOY_AXIS_1))
 
-    if Input.is_action_pressed("ui_right"):
-        velocity.x += 1
-    if Input.is_action_pressed("ui_left"):
-        velocity.x -= 1
-    if Input.is_action_pressed("ui_down"):
-        velocity.y += 1
-    if Input.is_action_pressed("ui_up"):
-        velocity.y -= 1
-    if velocity.length() > 0:
+    if velocity.length() > LEFT_ANALOG_DEADZONE:
         velocity = velocity.normalized() * SPEED
         $AnimatedSprite.play()
     else:
